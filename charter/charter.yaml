@@ -1,0 +1,44 @@
+version: '7.1'
+epoch: 2026-10
+governance:
+  formation: solo
+  signing_since: '2026-10-01'
+  rollback_refused: true
+  fork_refused: true
+signers:
+- fingerprint: PENDING
+  name: Owner
+  github: bigDSanalyst
+admissions:
+  hand_proofs:
+  - hand-proved-charter-v1
+vaults:
+- name: catalytic_barrier
+  track: main
+  coq:
+  - adversary.v
+  - k2m2.v
+  audits_expected:
+  - A1
+  - A2
+  - A3
+  - A4
+  - A5
+  require_full_coverage: true
+compilers:
+- name: coqc
+  version: 8.18.0
+  required: true
+guard_settings:
+  fail_closed: true
+  require_witness: true
+  require_mutation_test: true
+  require_ots_anchor: true
+  require_protocol: true
+  require_binding_field: true
+  require_track_field: true
+  require_scope_field: true
+  require_full_coverage_for_accepted: true
+signature: TeHmQFXVGy8QVidwj185XLIFUPQ14p2jY0159/Djft2LVw5gM1lwHx64RIJXR6OLjGDQNG/faXdlWIwfAqFgCQ==
+signer_fingerprint: fcaeefdf692d364c6d060a063d5794d1bece860350f17e00dfa1bdfe103f6f57
+signed_at: '2026-10-27T01:53:17Z'

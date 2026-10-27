@@ -1,0 +1,189 @@
+DIGEST b5de020c41b80653ab7200f49431c5b8
+Fadversary
+R15:20 Coq.ZArith.ZArith <> <> lib
+R22:24 Coq.micromega.Lia <> <> lib
+R26:29 Coq.setoid_ring.Ring <> <> lib
+def 197:204 <> zpow_nat
+R211:211 Coq.Numbers.BinNums <> Z ind
+binder 207:207 <> x:1
+R219:221 Coq.Init.Datatypes <> nat ind
+binder 215:215 <> n:2
+R226:226 Coq.Numbers.BinNums <> Z ind
+R239:239 adversary <> n:2 var
+R250:250 Coq.Init.Datatypes <> O constr
+R261:261 Coq.Init.Datatypes <> S constr
+R269:271 Coq.ZArith.BinInt <> ::Z_scope:x_'*'_x not
+R268:268 adversary <> x:1 var
+R272:279 adversary <> zpow_nat:3 def
+R281:281 adversary <> x:1 var
+def 302:311 <> prod_range
+R321:324 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R318:320 Coq.Init.Datatypes <> nat ind
+R325:325 Coq.Numbers.BinNums <> Z ind
+binder 314:314 <> f:5
+R333:335 Coq.Init.Datatypes <> nat ind
+binder 329:329 <> n:6
+R340:340 Coq.Numbers.BinNums <> Z ind
+R353:353 adversary <> n:6 var
+R364:364 Coq.Init.Datatypes <> O constr
+R375:375 Coq.Init.Datatypes <> S constr
+R385:387 Coq.ZArith.BinInt <> ::Z_scope:x_'*'_x not
+R382:382 adversary <> f:5 var
+R388:397 adversary <> prod_range:7 def
+R399:399 adversary <> f:5 var
+def 420:428 <> sum_range
+R438:441 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R435:437 Coq.Init.Datatypes <> nat ind
+R442:442 Coq.Numbers.BinNums <> Z ind
+binder 431:431 <> f:9
+R450:452 Coq.Init.Datatypes <> nat ind
+binder 446:446 <> n:10
+R457:457 Coq.Numbers.BinNums <> Z ind
+R470:470 adversary <> n:10 var
+R481:481 Coq.Init.Datatypes <> O constr
+R492:492 Coq.Init.Datatypes <> S constr
+R502:504 Coq.ZArith.BinInt <> ::Z_scope:x_'+'_x not
+R499:499 adversary <> f:9 var
+R505:513 adversary <> sum_range:11 def
+R515:515 adversary <> f:9 var
+prf 533:562 <> prod_range_zero_of_factor_zero
+R583:585 Coq.Init.Datatypes <> nat ind
+binder 576:576 <> D:13
+binder 578:579 <> s0:14
+R596:599 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R593:595 Coq.Init.Datatypes <> nat ind
+R600:600 Coq.Numbers.BinNums <> Z ind
+binder 589:589 <> f:15
+R619:622 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R608:613 Coq.Arith.PeanoNat Nat lt def
+R615:616 adversary <> s0:14 var
+R618:618 adversary <> D:13 var
+R631:634 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R627:629 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R623:623 adversary <> f:15 var
+R625:626 adversary <> s0:14 var
+R649:651 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R635:644 adversary <> prod_range def
+R646:646 adversary <> f:15 var
+R648:648 adversary <> D:13 var
+R774:783 Coq.Arith.PeanoNat Nat eq_dec thm
+R774:783 Coq.Arith.PeanoNat Nat eq_dec thm
+R860:865 Coq.Arith.PeanoNat Nat lt def
+R860:865 Coq.Arith.PeanoNat Nat lt def
+prf 933:950 <> adversary_sum_zero
+R970:972 Coq.Init.Datatypes <> nat ind
+binder 964:964 <> r:16
+binder 966:966 <> D:17
+R987:990 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R984:986 Coq.Init.Datatypes <> nat ind
+R991:991 Coq.Numbers.BinNums <> Z ind
+binder 976:980 <> alpha:18
+R1002:1005 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R999:1001 Coq.Init.Datatypes <> nat ind
+R1006:1008 Coq.Init.Datatypes <> nat ind
+binder 995:995 <> a:19
+R1019:1022 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1016:1018 Coq.Init.Datatypes <> nat ind
+R1023:1023 Coq.Numbers.BinNums <> Z ind
+binder 1012:1012 <> w:20
+R1041:1048 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1031:1036 Coq.Arith.PeanoNat Nat le def
+R1038:1038 adversary <> r:16 var
+R1040:1040 adversary <> D:17 var
+R1167:1169 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R1049:1057 adversary <> sum_range def
+binder 1064:1064 <> i:21
+R1078:1080 Coq.ZArith.BinInt <> ::Z_scope:x_'*'_x not
+R1075:1075 adversary <> w:20 var
+R1077:1077 adversary <> i:21 var
+R1081:1090 adversary <> prod_range def
+binder 1097:1097 <> s:22
+R1134:1136 Coq.ZArith.BinInt <> ::Z_scope:x_'-'_x not
+R1110:1117 adversary <> zpow_nat def
+R1120:1124 adversary <> alpha:18 var
+R1126:1126 adversary <> i:21 var
+R1130:1130 adversary <> a:19 var
+R1132:1132 adversary <> s:22 var
+R1137:1144 adversary <> zpow_nat def
+R1147:1151 adversary <> alpha:18 var
+R1153:1153 adversary <> s:22 var
+R1157:1157 adversary <> a:19 var
+R1159:1159 adversary <> s:22 var
+R1163:1163 adversary <> D:17 var
+R1166:1166 adversary <> r:16 var
+R1321:1326 Coq.Arith.PeanoNat Nat lt def
+R1321:1326 Coq.Arith.PeanoNat Nat lt def
+R1452:1454 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R1368:1377 adversary <> prod_range def
+binder 1384:1384 <> s:23
+R1422:1424 Coq.ZArith.BinInt <> ::Z_scope:x_'-'_x not
+R1397:1404 adversary <> zpow_nat def
+R1420:1420 adversary <> s:23 var
+R1425:1432 adversary <> zpow_nat def
+R1441:1441 adversary <> s:23 var
+R1447:1447 adversary <> s:23 var
+R1452:1454 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R1368:1377 adversary <> prod_range def
+binder 1384:1384 <> s:24
+R1422:1424 Coq.ZArith.BinInt <> ::Z_scope:x_'-'_x not
+R1397:1404 adversary <> zpow_nat def
+R1420:1420 adversary <> s:24 var
+R1425:1432 adversary <> zpow_nat def
+R1441:1441 adversary <> s:24 var
+R1447:1447 adversary <> s:24 var
+R1471:1500 adversary <> prod_range_zero_of_factor_zero thm
+R1471:1500 adversary <> prod_range_zero_of_factor_zero thm
+prf 1595:1617 <> adversary_contradiction
+R1637:1639 Coq.Init.Datatypes <> nat ind
+binder 1631:1631 <> r:25
+binder 1633:1633 <> D:26
+R1654:1657 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1651:1653 Coq.Init.Datatypes <> nat ind
+R1658:1658 Coq.Numbers.BinNums <> Z ind
+binder 1643:1647 <> alpha:27
+R1669:1672 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1666:1668 Coq.Init.Datatypes <> nat ind
+R1673:1675 Coq.Init.Datatypes <> nat ind
+binder 1662:1662 <> a:28
+R1686:1689 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1683:1685 Coq.Init.Datatypes <> nat ind
+R1690:1690 Coq.Numbers.BinNums <> Z ind
+binder 1679:1679 <> w:29
+R1713:1713 Coq.Numbers.BinNums <> Z ind
+binder 1703:1709 <> c_gamma:30
+R1731:1734 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1721:1726 Coq.Arith.PeanoNat Nat le def
+R1728:1728 adversary <> r:25 var
+R1730:1730 adversary <> D:26 var
+R1747:1754 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1742:1745 Coq.Init.Logic <> ::type_scope:x_'<>'_x not
+R1735:1741 adversary <> c_gamma:30 var
+R1883:1890 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1873:1875 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R1755:1763 adversary <> sum_range def
+binder 1770:1770 <> i:31
+R1784:1786 Coq.ZArith.BinInt <> ::Z_scope:x_'*'_x not
+R1781:1781 adversary <> w:29 var
+R1783:1783 adversary <> i:31 var
+R1787:1796 adversary <> prod_range def
+binder 1803:1803 <> s:32
+R1840:1842 Coq.ZArith.BinInt <> ::Z_scope:x_'-'_x not
+R1816:1823 adversary <> zpow_nat def
+R1826:1830 adversary <> alpha:27 var
+R1832:1832 adversary <> i:31 var
+R1836:1836 adversary <> a:28 var
+R1838:1838 adversary <> s:32 var
+R1843:1850 adversary <> zpow_nat def
+R1853:1857 adversary <> alpha:27 var
+R1859:1859 adversary <> s:32 var
+R1863:1863 adversary <> a:28 var
+R1865:1865 adversary <> s:32 var
+R1869:1869 adversary <> D:26 var
+R1872:1872 adversary <> r:25 var
+R1876:1882 adversary <> c_gamma:30 var
+R1891:1895 Coq.Init.Logic <> False ind
+R1960:1977 adversary <> adversary_sum_zero thm
+R1960:1977 adversary <> adversary_sum_zero thm
+R1960:1977 adversary <> adversary_sum_zero thm
+R2065:2082 adversary <> adversary_sum_zero thm
+R2103:2125 adversary <> adversary_contradiction thm
