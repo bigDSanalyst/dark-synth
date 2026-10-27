@@ -49,3 +49,26 @@ def compare_with_primary(primary, witness):
     disagreements = [f"{name}: primary={a!r} witness={b!r}"
                      for name, a, b in pairs if a != b]
     return {"agrees_with_primary": not disagreements, "disagreements": disagreements}
+
+
+def verify_coq_hashes(ledger_path, coq_dir):
+    """Every Coq file must have a matching attempt entry in the ledger."""
+    import hashlib
+    if not ledger_path.exists():
+        raise Unreadable(f"no ledger at {ledger_path}")
+    seen = set()
+    for line in ledger_path.read_text().splitlines():
+        if not line.strip():
+            continue
+        e = json.loads(line)
+        if e.get("kind") == "attempt":
+            sha = e.get("data", {}).get("input_sha256", "")
+            if sha:
+                seen.add(sha)
+    out = []
+    for f in sorted(coq_dir.glob("*.v")):
+        actual = hashlib.sha256(f.read_bytes()).hexdigest()
+        out.append({"file": f.name,
+                    "status": "matched" if actual in seen else "unmatched",
+                    "sha256": actual})
+    return out

@@ -32,12 +32,12 @@ def check_charter(repo):
     out = []
     ok, msg = M.formation_ok(cfg)
     out.append(Finding(OK, "formation", msg) if ok else Finding(BLOCK, "formation", msg))
-    if cfg.get("signature"):
-        out.append(Finding(OK, "charter_signed",
-                          f"signed by {cfg.get('signer_fingerprint', '?')[:16]}..."))
+    import charter as CH
+    sig_ok, sig_msg = CH.verify(p)
+    if sig_ok:
+        out.append(Finding(OK, "charter_signature", sig_msg))
     else:
-        out.append(Finding(BLOCK, "charter_unsigned",
-                          "charter has no signature (Axiom 22)"))
+        out.append(Finding(BLOCK, "charter_signature", sig_msg))
     if not (cfg.get("admissions") or {}).get("hand_proofs"):
         out.append(Finding(DECIDE, "hand_proof_admission",
                           "hand-proved claims cannot be admitted",
@@ -108,30 +108,79 @@ def check_audits(repo):
 
 
 def check_anchors(repo):
-    """The .ots file proves the ledger head existed at a point in time (Axiom 18)."""
-    p = repo / "vault" / "catalytic_barrier" / "records.jsonl.ots"
-    if not p.exists():
-        return [Finding(DECIDE, "anchors",
-                        "ledger is not OTS-stamped",
+    """Axiom 18: the .ots must be on the current ledger digest."""
+    import hashlib, json
+    p_ots = repo / "vault" / "catalytic_barrier" / "records.jsonl.ots"
+    p_ledger = repo / "vault" / "catalytic_barrier" / "records.jsonl"
+    p_manifest = repo / "vault" / "catalytic_barrier" / "anchor_manifest.jsonl"
+    if not p_ots.exists():
+        return [Finding(DECIDE, "anchors", "ledger not OTS-stamped",
                         "tools/anchor.py stamp vault/catalytic_barrier/records.jsonl")]
-    if p.stat().st_size < 100:
+    if not p_manifest.exists():
+        return [Finding(WARN, "anchors", ".ots exists but anchor_manifest.jsonl missing")]
+    try:
+        stamped = json.loads(p_manifest.read_text().strip().split("\n")[-1]).get("ledger_sha256", "")
+    except (json.JSONDecodeError, IndexError):
+        return [Finding(WARN, "anchors", "anchor_manifest.jsonl is corrupt")]
+    current = hashlib.sha256(p_ledger.read_bytes()).hexdigest()
+    if stamped != current:
         return [Finding(WARN, "anchors",
-                        f".ots file is suspiciously small ({p.stat().st_size} bytes)")]
-    text = p.read_text(errors="replace")
-    if "BitcoinBlockHeaderAttestation" in text:
+                        f"ledger changed since stamping ({stamped[:8]} -> {current[:8]})",
+                        "re-run tools/anchor.py stamp after all appends are done")]
+    if "BitcoinBlockHeaderAttestation" in p_ots.read_text(errors="replace"):
         return [Finding(OK, "anchors",
-                        f"ledger stamped and Bitcoin-confirmed ({p.stat().st_size} bytes)")]
+                        f"stamped and Bitcoin-confirmed (digest {current[:8]})")]
     return [Finding(LOOK, "anchors",
-                    f"ledger stamped, Bitcoin confirmation pending ({p.stat().st_size} bytes)",
-                    "run tools/anchor.py upgrade in ~24h to complete the proof")]
+                    f"stamped, confirmation pending (digest {current[:8]})",
+                    "run tools/anchor.py upgrade in ~24h")]
+
+
+
+def check_security_pin(repo):
+    """Axiom 23: fingerprint must be pinned outside the charter file."""
+    cfg_path = repo / "charter" / "charter.yaml"
+    sec_path = repo / "SECURITY.md"
+    if not cfg_path.exists() or not sec_path.exists():
+        return [Finding(DECIDE, "security_pin", "charter or SECURITY.md missing")]
+    cfg = M.load(cfg_path)
+    fp = cfg.get("signer_fingerprint", "")
+    if not fp or fp == "PENDING":
+        return [Finding(BLOCK, "security_pin", "charter has no fingerprint")]
+    if fp in sec_path.read_text():
+        return [Finding(OK, "security_pin",
+                        f"fingerprint {fp[:16]}... cross-pinned in SECURITY.md")]
+    return [Finding(BLOCK, "security_pin",
+                    f"fingerprint {fp[:16]}... NOT in SECURITY.md (Axiom 23)",
+                    f"add {fp} to SECURITY.md")]
+
+
+
+def check_witness_coq(repo):
+    """Independent witness: Coq files must match ledger attempts."""
+    try:
+        found = W.verify_coq_hashes(
+            repo / "vault" / "catalytic_barrier" / "records.jsonl",
+            repo / "vault" / "catalytic_barrier" / "coq",
+        )
+    except W.Unreadable as e:
+        return [Finding(BLOCK, "witness_coq", str(e))]
+    unmatched = [f for f in found if f["status"] == "unmatched"]
+    if unmatched:
+        return [Finding(BLOCK, "witness_coq",
+                        f"{len(unmatched)} Coq file(s) unmatched: {[f['file'] for f in unmatched]}",
+                        "append an attempt entry with the current sha256, or restore the file")]
+    return [Finding(OK, "witness_coq",
+                    f"{len(found)} Coq file(s) independently matched to ledger")]
 
 
 def run(repo):
     findings = []
     findings.extend(check_charter(repo))
+    findings.extend(check_security_pin(repo))
     findings.extend(check_kernel(repo))
     findings.extend(check_ledger(repo))
     findings.extend(check_witness(repo))
+    findings.extend(check_witness_coq(repo))
     findings.extend(check_coq_files(repo))
     findings.extend(check_audits(repo))
     findings.extend(check_anchors(repo))
