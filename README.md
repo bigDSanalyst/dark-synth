@@ -1,6 +1,6 @@
 # Dark Synth
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.PENDING.svg)](https://doi.org/10.5281/zenodo.PENDING)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23689103.svg)](https://doi.org/10.5281/zenodo.23689103)
 
 A tag-audited methodology for mathematical work. Every claim carries
 `[source/status]`; every correction is logged; every `[run]` claim is

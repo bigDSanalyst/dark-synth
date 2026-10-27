@@ -19,7 +19,7 @@ authors:
     affiliation: "Independent researcher"
 repository-code: "https://github.com/bigDSanalyst/dark-synth"
 url: "https://github.com/bigDSanalyst/dark-synth"
-doi: "10.5281/zenodo.PENDING"
+doi: "10.5281/zenodo.23689103"
 license: MIT
 keywords:
   - catalytic complexity
@@ -30,5 +30,9 @@ keywords:
   - methodology
 identifiers:
   - type: doi
-    value: "10.5281/zenodo.PENDING"
+    value: "10.5281/zenodo.23689103"
+    description: "Concept DOI (resolves to latest)"
+  - type: doi
+    value: "10.5281/zenodo.23689104"
+    description: "Version DOI for v1.2.2"
     description: "All-versions concept DOI (resolves to latest release)"
