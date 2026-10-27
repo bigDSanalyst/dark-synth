@@ -156,9 +156,10 @@ def check_security_pin(repo):
 
 
 def check_witness_coq(repo):
-    """Independent witness: Coq files must match ledger attempts."""
+    """Each Coq file must have an attempt entry. Accepted -> ok;
+    attempted-but-not-accepted -> LOOK (info); no entry -> BLOCK."""
     try:
-        found = W.verify_coq_hashes(
+        found = W.verify_coq_hashes_strict(
             repo / "vault" / "catalytic_barrier" / "records.jsonl",
             repo / "vault" / "catalytic_barrier" / "coq",
         )
@@ -169,8 +170,14 @@ def check_witness_coq(repo):
         return [Finding(BLOCK, "witness_coq",
                         f"{len(unmatched)} Coq file(s) unmatched: {[f['file'] for f in unmatched]}",
                         "append an attempt entry with the current sha256, or restore the file")]
-    return [Finding(OK, "witness_coq",
-                    f"{len(found)} Coq file(s) independently matched to ledger")]
+    attempted = [f for f in found if f["status"] == "attempted_rejected"]
+    verified = [f for f in found if f["status"] == "verified"]
+    out = [Finding(OK, "witness_coq",
+                   f"{len(verified)} verified, {len(attempted)} attempted-but-not-checked")]
+    if attempted:
+        out.append(Finding(LOOK, "witness_coq_attempts",
+                          f"attempted but not verified: {[f['file'] for f in attempted]}"))
+    return out
 
 
 def run(repo):

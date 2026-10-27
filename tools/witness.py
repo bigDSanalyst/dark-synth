@@ -72,3 +72,35 @@ def verify_coq_hashes(ledger_path, coq_dir):
                     "status": "matched" if actual in seen else "unmatched",
                     "sha256": actual})
     return out
+
+
+def verify_coq_hashes_strict(ledger_path, coq_dir):
+    """Per-file: 'verified' if attempt.result==accepted;
+    'attempted_rejected' if an attempt exists but result!=accepted;
+    'unmatched' if no attempt entry at all."""
+    import hashlib
+    if not ledger_path.exists():
+        raise Unreadable(f"no ledger at {ledger_path}")
+    accepted, attempted = set(), set()
+    for line in ledger_path.read_text().splitlines():
+        if not line.strip():
+            continue
+        e = json.loads(line)
+        if e.get("kind") == "attempt":
+            sha = e.get("data", {}).get("input_sha256", "")
+            if sha:
+                if e.get("data", {}).get("result") == "accepted":
+                    accepted.add(sha)
+                else:
+                    attempted.add(sha)
+    out = []
+    for f in sorted(coq_dir.glob("*.v")):
+        actual = hashlib.sha256(f.read_bytes()).hexdigest()
+        if actual in accepted:
+            status = "verified"
+        elif actual in attempted:
+            status = "attempted_rejected"
+        else:
+            status = "unmatched"
+        out.append({"file": f.name, "status": status, "sha256": actual})
+    return out

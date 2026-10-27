@@ -14,8 +14,20 @@ UNTESTED = {
     "S-projection counterexample": "specific counterexample not mechanized; hand-audit only",
 }
 def _copy(src):
+    """Copy the vault for mutation testing, excluding build artifacts.
+    FM12: .lake/ (Mathlib cache) is ~3 GB; coq artifacts, python bytecode,
+    and any *build* directory must never be copied — the mutation test
+    cares only about source."""
     d = Path(tempfile.mkdtemp(prefix="ds-mut-")) / "repo"
-    shutil.copytree(src, d, ignore=shutil.ignore_patterns(".git", "__pycache__", "*.pyc"))
+    shutil.copytree(
+        src, d,
+        ignore=shutil.ignore_patterns(
+            ".git", "__pycache__", "*.pyc", ".pytest_cache",
+            ".lake", "*.olean", "*.ilean",
+            "*.aux", "*.glob", "*.vo", "*.vok", "*.vos", "*.vio",
+            "build", "node_modules",
+        ),
+    )
     return d
 def _catch(repo, rel_path):
     r = subprocess.run(["coqc", str(repo / rel_path)], capture_output=True, text=True, timeout=180)

@@ -14,3 +14,16 @@ jobs:
       - run: python tools/mutation_test.py
       - run: python tools/doctor.py
         continue-on-error: true
+
+      - name: Lean 4 kernel check
+        if: hashFiles('vault/catalytic_barrier/lean/lakefile.lean') != ''
+        run: |
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
+          source ~/.profile
+          cd vault/catalytic_barrier/lean
+          lake exe cache get
+          lake build
+          if grep -rn "sorry\|native_decide" AdversaryRing.lean; then
+            echo "::error::forbidden token in Lean proof"
+            exit 1
+          fi

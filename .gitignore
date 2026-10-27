@@ -3,3 +3,26 @@ __pycache__/
 .venv/
 *.pem
 .pytest_cache/
+
+# Coq build artifacts (never commit — .aux embeds absolute paths)
+*.aux
+*.glob
+*.vo
+*.vok
+*.vos
+*.vio
+*.a
+*.native
+*.cmx
+*.cmi
+*.cmxs
+
+# Python bytecode and pytest cache
+__pycache__/
+.pytest_cache/
+*.pyc
+
+# Lean build artifacts
+.lake/
+*.olean
+*.ilean

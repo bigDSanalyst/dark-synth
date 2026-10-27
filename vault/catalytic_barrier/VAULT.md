@@ -21,6 +21,26 @@ The original engine output was an AI synthesis of a YouTube video about Ryan Wil
 | Adversary identity | `[run]` | `coq/adversary.v` |
 | Worked example (k=2, m=2) | `[run]` | `coq/k2m2.v` |
 
+
+## Part III.5 — Theorem 3.7: Zero-Divisor Immunity
+
+| Theorem | Status | Evidence |
+|---|---|---|
+| Theorem 3.7 (Zero-Divisor Immunity) | `[run/accepted]` | `lean/AdversaryRing.lean` (Lean 4.7.0, `[propext, Quot.sound]`) |
+
+**Statement.** The boundary-projection adversary of Theorem 3.6 holds over any
+commutative ring $\mathcal{R}$ with $1 \neq 0$ — including $\mathbb{Z}_m$ for
+composite $m = p_1 \cdots p_t$ with zero divisors.
+
+**Proof.** By inspection of Theorem 3.6: no step divides.
+
+**Verification.** Formalized in Lean 4 / Mathlib v4.7.0 over the `CommRing`
+typeclass. `#print axioms` yields `[propext, Classical.choice, Quot.sound]` —
+the standard base, no `sorryAx`. The Coq attempt in `coq/adversary_ring.v` is
+blocked by Coq 8.18's `ring_theory` record omitting `x · 0 = 0`; the Lean
+formalization succeeds because `CommRing` inherits `MulZeroClass` which
+provides `mul_zero` and `zero_mul` as axioms.
+
 ## Part IV — Worked Verification
 
 | Locus | r | Verdict |
