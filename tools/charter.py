@@ -49,6 +49,7 @@ def is_signed(cfg):
 
 
 def verify(path):
+    """Axiom 23: verification requires the external pin. Missing pin = refusal."""
     cfg = load(path)
     ok, msg = is_signed(cfg)
     if not ok:
@@ -56,15 +57,20 @@ def verify(path):
     body = {k: v for k, v in cfg.items() if k not in SIGNATURE_FIELDS}
     try:
         sig = base64.b64decode(cfg["signature"])
-        key_path = path.parent.parent / "owner.pub"
-        if key_path.exists():
-            pub = serialization.load_ssh_public_key(key_path.read_bytes())
-        else:
-            return (True, "structurally valid; " + cfg["signer_fingerprint"][:16] + "... pinned in charter (no external key to verify against)")
-        pub.verify(sig, _canonical(body))
-        return True, "signature valid; signed by " + cfg["signer_fingerprint"][:16] + "..."
     except Exception as e:
-        return False, "signature does not verify: " + str(e)
+        return False, "signature is not valid base64: " + str(e)
+    key_path = path.parent.parent / "owner.pub"
+    if not key_path.exists():
+        return False, "owner.pub is missing from the repo root (Axiom 23: external pin required)"
+    try:
+        pub = serialization.load_ssh_public_key(key_path.read_bytes())
+    except Exception as e:
+        return False, "owner.pub is not a valid SSH public key: " + str(e)
+    try:
+        pub.verify(sig, _canonical(body))
+        return True, "signature valid against owner.pub; signed by " + cfg["signer_fingerprint"][:16] + "..."
+    except Exception as e:
+        return False, "signature does not verify against owner.pub: " + str(e)
 
 
 def sign(path, key_path):
