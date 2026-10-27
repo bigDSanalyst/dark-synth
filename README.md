@@ -1,5 +1,7 @@
 # Dark Synth
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.PENDING.svg)](https://doi.org/10.5281/zenodo.PENDING)
+
 A tag-audited methodology for mathematical work. Every claim carries
 `[source/status]`; every correction is logged; every `[run]` claim is
 kernel-accepted with a sha256; the audit trail is tested against its own

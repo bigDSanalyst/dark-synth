@@ -1,0 +1,33 @@
+{
+  "creators": [
+    {
+      "name": "Maino, Nicholas Clifford",
+      "orcid": "0009-0007-6650-5879",
+      "affiliation": "Independent researcher"
+    }
+  ],
+  "title": "Dark Synth: A Tag-Audited Methodology for Mathematical Work, with a Kernel-Verified Catalytic Pass Barrier",
+  "description": "<p><strong>Dark Synth</strong> is a tag-audited methodology for mathematical work: every claim carries a two-axis <code>[source/status]</code> tag, every correction is logged in an append-only hash-chained ledger, every <code>[run]</code> claim is kernel-accepted with a recorded sha256, and the audit trail is tested against its own mutants.</p><p>The reference vault (<code>vault/catalytic_barrier/</code>) contains:</p><ul><li><strong>Theorem 3.6</strong> &mdash; for the interpolation class <em>C</em><sub>int</sub>, any linear-extraction catalytic algorithm requires at least <em>D</em>+1 evaluation passes. Kernel-verified in Coq 8.18 (<code>Closed under the global context</code>).</li><li><strong>Theorem 3.7</strong> &mdash; the same boundary-projection adversary holds over any commutative ring with 1&nbsp;&ne;&nbsp;0, including <em>Z</em><sub>m</sub> with zero divisors. Kernel-verified in Lean 4.7.0 (<code>#print axioms</code> yields <code>[propext, Quot.sound]</code>).</li><li>Audit drawer A1&ndash;A5 with a mutation matrix naming which corrections are mechanized and which are hand-audit-only.</li><li>Failure-mode catalog FM1&ndash;FM14, each recording a bug the methodology caught in its own construction.</li></ul><p>Code is MIT-licensed; documentation and prose are CC BY 4.0. The ledger head is anchored to Bitcoin via OpenTimestamps.</p>",
+  "version": "1.2.2",
+  "access_right": "open",
+  "upload_type": "software",
+  "license": "mit",
+  "language": "eng",
+  "keywords": [
+    "catalytic complexity",
+    "tree evaluation",
+    "proof audit",
+    "formal verification",
+    "Coq",
+    "Lean 4",
+    "OpenTimestamps",
+    "research methodology"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/bigDSanalyst/dark-synth",
+      "relation": "isSupplementTo",
+      "resource_type": "software"
+    }
+  ]
+}
