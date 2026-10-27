@@ -41,4 +41,5 @@ hand-audit-only.
 
 ## License
 
-[PENDING]
+- **Code**: MIT — see `LICENSE`
+- **Content** (docs, prose, paper text): CC BY 4.0 — see `LICENSE-CONTENT.md`
