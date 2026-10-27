@@ -3,4 +3,3 @@ __pycache__/
 .venv/
 *.pem
 .pytest_cache/
-vault/*/records.jsonl.ots

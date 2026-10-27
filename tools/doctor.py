@@ -106,6 +106,26 @@ def check_audits(repo):
     return [Finding(OK, "audits", f"{len(present)} audit file(s)")]
 
 
+
+def check_anchors(repo):
+    """The .ots file proves the ledger head existed at a point in time (Axiom 18)."""
+    p = repo / "vault" / "catalytic_barrier" / "records.jsonl.ots"
+    if not p.exists():
+        return [Finding(DECIDE, "anchors",
+                        "ledger is not OTS-stamped",
+                        "tools/anchor.py stamp vault/catalytic_barrier/records.jsonl")]
+    if p.stat().st_size < 100:
+        return [Finding(WARN, "anchors",
+                        f".ots file is suspiciously small ({p.stat().st_size} bytes)")]
+    text = p.read_text(errors="replace")
+    if "BitcoinBlockHeaderAttestation" in text:
+        return [Finding(OK, "anchors",
+                        f"ledger stamped and Bitcoin-confirmed ({p.stat().st_size} bytes)")]
+    return [Finding(LOOK, "anchors",
+                    f"ledger stamped, Bitcoin confirmation pending ({p.stat().st_size} bytes)",
+                    "run tools/anchor.py upgrade in ~24h to complete the proof")]
+
+
 def run(repo):
     findings = []
     findings.extend(check_charter(repo))
@@ -114,6 +134,7 @@ def run(repo):
     findings.extend(check_witness(repo))
     findings.extend(check_coq_files(repo))
     findings.extend(check_audits(repo))
+    findings.extend(check_anchors(repo))
     return findings
 
 
