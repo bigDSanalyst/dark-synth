@@ -26,3 +26,6 @@ __pycache__/
 .lake/
 *.olean
 *.ilean
+
+# OpenTimestamps upgrade backups
+*.bak
