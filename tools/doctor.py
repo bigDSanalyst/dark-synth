@@ -109,7 +109,7 @@ def check_audits(repo):
 
 def check_anchors(repo):
     """Axiom 18: the .ots must be on the current ledger digest."""
-    import hashlib, json
+    import hashlib, json, subprocess
     p_ots = repo / "vault" / "catalytic_barrier" / "records.jsonl.ots"
     p_ledger = repo / "vault" / "catalytic_barrier" / "records.jsonl"
     p_manifest = repo / "vault" / "catalytic_barrier" / "anchor_manifest.jsonl"
@@ -127,9 +127,20 @@ def check_anchors(repo):
         return [Finding(WARN, "anchors",
                         f"ledger changed since stamping ({stamped[:8]} -> {current[:8]})",
                         "re-run tools/anchor.py stamp after all appends are done")]
-    if "BitcoinBlockHeaderAttestation" in p_ots.read_text(errors="replace"):
-        return [Finding(OK, "anchors",
-                        f"stamped and Bitcoin-confirmed (digest {current[:8]})")]
+    import shutil
+    ots = shutil.which("ots")
+    if not ots:
+        return [Finding(DEGRADED, "anchors",
+                        "cannot verify anchor: ots CLI not installed")]
+    try:
+        r = subprocess.run([ots, "info", str(p_ots)],
+                           capture_output=True, text=True, timeout=30)
+        output = r.stdout + r.stderr
+        if "BitcoinBlockHeaderAttestation" in output:
+            return [Finding(OK, "anchors",
+                            f"stamped and Bitcoin-confirmed (digest {current[:8]})")]
+    except Exception as e:
+        return [Finding(WARN, "anchors", f"failed to run ots info: {e}")]
     return [Finding(LOOK, "anchors",
                     f"stamped, confirmation pending (digest {current[:8]})",
                     "run tools/anchor.py upgrade in ~24h")]
