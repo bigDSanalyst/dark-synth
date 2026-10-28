@@ -41,6 +41,19 @@ algorithms (Theorem 3.6), verified by Coq for the adversary identity
 mutation matrix naming which corrections the test suite defends and which are
 hand-audit-only.
 
+
+### Known local states (`doctor.py`)
+
+- `DEGRADED kernel: no Coq toolchain on PATH` and `DEGRADED coq.*`
+  This is not a defect in the repo. It means the local machine does not have
+  `coqc` installed. The Coq proofs were verified and recorded in the ledger
+  at the time of commit. To flip these to `ok` locally, run
+  `apt-get install coq` (or equivalent) and re-run `tools/doctor.py`.
+- `LOOK witness_coq_attempts: ['adversary_ring.v']`
+  This is an honest record of a tooling limitation: Coq 8.18's abstract
+  `ring_theory` omits `x * 0 = 0`, blocking the commutative-ring proof. The
+  same theorem is kernel-verified in Lean 4 (`lean/AdversaryRing.lean`).
+
 ## License
 
 - **Code**: MIT — see `LICENSE`
