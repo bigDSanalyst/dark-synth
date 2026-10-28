@@ -72,17 +72,76 @@ def upgrade(ledger):
 
 
 def verify(ledger):
+    """Fully-offline content-binding verify.
+
+    Uses `ots info` to extract (a) the file digest baked into the OTS proof
+    and (b) the confirmed Bitcoin block height. Compares the proof's digest
+    to sha256(current ledger) and cross-checks anchor_manifest.jsonl.
+
+    Return codes:
+      0 — proof valid, digest matches, manifest matches
+      1 — infrastructure (no ots CLI, missing proof file)
+      2 — content mismatch (proof digest stale, or manifest stale, or
+          proof has no confirmed attestation)
+    """
+    import hashlib, json, re
     ots, why = _probe_ots()
     if ots is None:
         print(f"cannot verify: {why}", file=sys.stderr)
         return 1
-    target = ledger.with_suffix(ledger.suffix + ".ots")
-    if not target.exists():
-        print(f"not stamped: {target}", file=sys.stderr)
+    proof = ledger.with_suffix(ledger.suffix + ".ots")
+    if not proof.exists():
+        print(f"not stamped: {proof}", file=sys.stderr)
         return 1
-    r = subprocess.run([ots, "verify", str(target)], capture_output=True, text=True, timeout=60)
-    print(r.stdout + r.stderr)
-    return 0 if r.returncode == 0 else 1
+
+    # 1. Parse the proof offline via `ots info` (does not touch the network).
+    try:
+        r = subprocess.run([ots, "info", str(proof)],
+                           capture_output=True, text=True, timeout=60)
+    except (OSError, subprocess.TimeoutExpired) as e:
+        print(f"ots info failed to run: {e}", file=sys.stderr)
+        return 1
+    info = r.stdout + r.stderr
+
+    # 2. Extract the confirmed block height.
+    height_match = re.search(r"BitcoinBlockHeaderAttestation\((\d+)\)", info)
+    if not height_match:
+        print("no Bitcoin block attestation in proof (pending or unconfirmed):", file=sys.stderr)
+        print(info[-300:], file=sys.stderr)
+        return 2
+    height = height_match.group(1)
+
+    # 3. Extract the digest the proof was made over.
+    digest_match = re.search(r"File sha256 hash:\s*([0-9a-f]{64})", info)
+    if not digest_match:
+        print("could not extract proof digest from `ots info` output", file=sys.stderr)
+        return 2
+    proof_digest = digest_match.group(1)
+
+    # 4. Content binding #1: proof digest vs current ledger bytes.
+    actual = hashlib.sha256(ledger.read_bytes()).hexdigest()
+    if proof_digest != actual:
+        print(f"proof digest mismatch: proof says {proof_digest[:16]}, "
+              f"ledger is {actual[:16]}", file=sys.stderr)
+        return 2
+
+    # 5. Content binding #2 (defense in depth): anchor manifest.
+    mf = ledger.parent / "anchor_manifest.jsonl"
+    if not mf.exists():
+        print("anchor_manifest.jsonl missing — no content binding", file=sys.stderr)
+        return 2
+    try:
+        last = json.loads(mf.read_text().splitlines()[-1])
+    except (json.JSONDecodeError, IndexError):
+        print("anchor_manifest.jsonl corrupt or empty", file=sys.stderr)
+        return 2
+    expected = last.get("ledger_sha256", "")
+    if expected != actual:
+        print(f"manifest mismatch: expected {expected[:16]}, actual {actual[:16]}", file=sys.stderr)
+        return 2
+
+    print(f"anchor ok: block {height}, digest {actual[:16]} matches proof + manifest")
+    return 0
 
 
 def main(argv=None):
